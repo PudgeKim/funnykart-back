@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get("/recent-races")
 def get_recent_races(db: Session = Depends(get_db)):
-    start_time, end_time = get_recent_days_range(5)
+    start_time, end_time = get_recent_days_range(3)
 
     recent_races = (
         db.query(models.Race)
