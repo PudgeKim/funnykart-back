@@ -24,10 +24,9 @@ app.include_router(recent_races.router, prefix="/races", tags=["recent"])
 @app.post("/races")
 def create_races(races: List[schemas.RaceBase], db: Session = Depends(get_db)):
     group_uuid = str(uuid.uuid4())
+    created_at = datetime.now(ZoneInfo("Asia/Seoul"))
 
     for race_data in races:
-        created_at = race_data.created_at or datetime.now(ZoneInfo("Asia/Seoul"))
-
         race = models.Race(
             group_uuid=group_uuid,
             track_name=race_data.track_name,
