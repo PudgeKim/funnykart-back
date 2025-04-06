@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -8,8 +8,8 @@ from src.utils import get_db
 router = APIRouter()
 
 
-@router.get("/loser-history/{character_name}")
-def get_all_loser_history(character_name: str, db: Session = Depends(get_db)):
+@router.get("/loser-history")
+def get_all_loser_history(character_name: str = Query(...), db: Session = Depends(get_db)):
     rows = (
         db.query(
             models.Race.group_uuid,
@@ -29,7 +29,7 @@ def get_all_loser_history(character_name: str, db: Session = Depends(get_db)):
         if not current or row.total_rank > current.total_rank:
             losers[group] = row
 
-    result = [
+    filtered = [
         {
             "group_uuid": row.group_uuid,
             "character_name": row.character_name,
@@ -40,4 +40,6 @@ def get_all_loser_history(character_name: str, db: Session = Depends(get_db)):
         if row.character_name == character_name
     ]
 
-    return result
+    filtered.sort(key=lambda r: r["created_at"], reverse=True)
+
+    return filtered
