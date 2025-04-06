@@ -6,7 +6,6 @@ from datetime import datetime
 class ResultBase(BaseModel):
     rank: int
     character_name: str
-    finish_time: str
 
 
 class RaceBase(BaseModel):

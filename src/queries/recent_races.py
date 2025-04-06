@@ -29,7 +29,6 @@ def get_recent_races(db: Session = Depends(get_db)):
                 {
                     "character_name": r.character_name,
                     "rank": r.rank,
-                    "finish_time": r.finish_time
                 }
                 for r in race.results
             ]
