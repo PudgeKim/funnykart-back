@@ -9,7 +9,7 @@ from src.database import engine
 from backports.zoneinfo import ZoneInfo
 from datetime import datetime
 
-from src.queries import losers, recent_races
+from src.queries import losers, recent_races, character
 from src import models, schemas
 from src.utils import get_db
 
@@ -19,6 +19,7 @@ app = FastAPI()
 
 app.include_router(losers.router, prefix="/races", tags=["losers"])
 app.include_router(recent_races.router, prefix="/races", tags=["recent"])
+app.include_router(character.router, prefix="/races", tags=["character"])
 
 
 @app.post("/races")
