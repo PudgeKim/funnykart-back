@@ -41,7 +41,6 @@ def create_races(races: List[schemas.RaceBase], db: Session = Depends(get_db)):
                 race_id=race.id,
                 rank=result.rank,
                 character_name=result.character_name,
-                finish_time=result.finish_time
             ))
 
     db.commit()
