@@ -34,4 +34,6 @@ def get_recent_races(db: Session = Depends(get_db)):
             ]
         })
 
+    result.sort(key=lambda r: r["created_at"], reverse=True)
+
     return result
