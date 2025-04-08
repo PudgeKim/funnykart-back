@@ -12,6 +12,7 @@ class RaceBase(BaseModel):
     track_name: str
     results: List[ResultBase]
     created_at: Optional[datetime] = None
+    finish_time: str = 'RETIRED'
 
     class Config:
         from_attributes = True

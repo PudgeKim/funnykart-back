@@ -22,5 +22,6 @@ class RaceResult(Base):
     race_id = Column(Integer, ForeignKey("races.id"))
     rank = Column(Integer)
     character_name = Column(String)
+    finish_time = Column(String, nullable=False, default='RETIRED')
 
     race = relationship("Race", back_populates="results")
