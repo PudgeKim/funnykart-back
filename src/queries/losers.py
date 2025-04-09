@@ -14,19 +14,19 @@ def get_today_losers(db: Session = Depends(get_db)):
 
     subquery = (
         db.query(
-            models.Race.group_uuid,
+            models.Race.group_hash,
             models.RaceResult.character_name,
             func.sum(models.RaceResult.rank).label("total_rank")
         )
             .join(models.RaceResult, models.Race.id == models.RaceResult.race_id)
             .filter(models.Race.created_at >= start_time)
             .filter(models.Race.created_at < end_time)
-            .group_by(models.Race.group_uuid, models.RaceResult.character_name)
+            .group_by(models.Race.group_hash, models.RaceResult.character_name)
             .subquery()
     )
 
     rows = db.query(
-        subquery.c.group_uuid,
+        subquery.c.group_hash,
         subquery.c.character_name,
         subquery.c.total_rank
     ).all()
@@ -37,17 +37,17 @@ def get_today_losers(db: Session = Depends(get_db)):
     # row: ('grp-2', 'Peach', 1)
     # row: ('grp-2', 'Yoshi', 4)
 
-    # key = group_uuid, value = row
+    # key = group_hash, value = row
     losers = {}
     for row in rows:
-        group = row.group_uuid
+        group = row.group_hash
         current = losers.get(group)
         if not current or row.total_rank > current.total_rank:
             losers[group] = row
 
     return [
         {
-            "group_uuid": row.group_uuid,
+            "group_hash": row.group_hash,
             "character_name": row.character_name,
             "total_rank": row.total_rank
         }
@@ -61,7 +61,7 @@ def get_recent_losers(db: Session = Depends(get_db)):
 
     subquery = (
         db.query(
-            models.Race.group_uuid,
+            models.Race.group_hash,
             models.RaceResult.character_name,
             models.Race.created_at,
             func.sum(models.RaceResult.rank).label("total_rank")
@@ -69,13 +69,13 @@ def get_recent_losers(db: Session = Depends(get_db)):
             .join(models.RaceResult, models.Race.id == models.RaceResult.race_id)
             .filter(models.Race.created_at >= start_time)
             .filter(models.Race.created_at < end_time)
-            .group_by(models.Race.group_uuid, models.RaceResult.character_name)
+            .group_by(models.Race.group_hash, models.RaceResult.character_name)
             .order_by(desc(models.Race.created_at))
             .subquery()
     )
 
     rows = db.query(
-        subquery.c.group_uuid,
+        subquery.c.group_hash,
         subquery.c.character_name,
         subquery.c.created_at,
         subquery.c.total_rank
@@ -83,14 +83,14 @@ def get_recent_losers(db: Session = Depends(get_db)):
 
     losers = {}
     for row in rows:
-        group = row.group_uuid
+        group = row.group_hash
         current = losers.get(group)
         if not current or row.total_rank > current.total_rank:
             losers[group] = row
 
     return [
         {
-            "group_uuid": row.group_uuid,
+            "group_hash": row.group_hash,
             "character_name": row.character_name,
             "total_rank": row.total_rank,
             "created_at": row.created_at

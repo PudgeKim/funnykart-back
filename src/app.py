@@ -41,13 +41,13 @@ def create_races(races: List[schemas.RaceBase], db: Session = Depends(get_db)):
     if is_duplicate_race(db, group_hash):
         raise HTTPException(
             status_code=400,
-            detail=f"group_uuid: {group_hash} already exists."
+            detail=f"group_hash: {group_hash} already exists."
         )
 
     # DB에 저장
     for race_data in races:
         race = models.Race(
-            group_uuid=group_hash,
+            group_hash=group_hash,
             track_name=race_data.track_name,
             created_at=created_at
         )

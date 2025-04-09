@@ -12,26 +12,26 @@ router = APIRouter()
 def get_all_loser_history(character_name: str = Query(...), db: Session = Depends(get_db)):
     rows = (
         db.query(
-            models.Race.group_uuid,
+            models.Race.group_hash,
             models.RaceResult.character_name,
             func.sum(models.RaceResult.rank).label("total_rank"),
             func.min(models.Race.created_at).label("created_at")
         )
             .join(models.RaceResult, models.Race.id == models.RaceResult.race_id)
-            .group_by(models.Race.group_uuid, models.RaceResult.character_name)
+            .group_by(models.Race.group_hash, models.RaceResult.character_name)
             .all()
     )
 
     losers = {}
     for row in rows:
-        group = row.group_uuid
+        group = row.group_hash
         current = losers.get(group)
         if not current or row.total_rank > current.total_rank:
             losers[group] = row
 
     filtered = [
         {
-            "group_uuid": row.group_uuid,
+            "group_hash": row.group_hash,
             "character_name": row.character_name,
             "total_rank": row.total_rank,
             "created_at": row.created_at
