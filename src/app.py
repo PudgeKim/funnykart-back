@@ -9,7 +9,7 @@ from src.database import engine
 from zoneinfo import ZoneInfo
 from datetime import datetime
 
-from src.queries import losers, recent_races, character
+from src.queries import losers, recent_races, character, tracks
 from src import models, schemas
 from src.queries.duplicate import is_duplicate_race
 from src.utils import get_db
@@ -21,6 +21,8 @@ app = FastAPI()
 app.include_router(losers.router, prefix="/races", tags=["losers"])
 app.include_router(recent_races.router, prefix="/races", tags=["recent"])
 app.include_router(character.router, prefix="/races", tags=["character"])
+
+app.include_router(tracks.router, prefix="/tracks")
 
 
 @app.post("/races")
