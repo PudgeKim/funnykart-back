@@ -1,7 +1,7 @@
 import hashlib
 from typing import List
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 
@@ -11,6 +11,7 @@ from datetime import datetime
 
 from src.queries import losers, recent_races, character
 from src import models, schemas
+from src.queries.duplicate import is_duplicate_race
 from src.utils import get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -37,6 +38,11 @@ def create_races(races: List[schemas.RaceBase], db: Session = Depends(get_db)):
         combined_str += result.finish_time
 
     group_hash = hashlib.sha256(combined_str.encode("utf-8")).hexdigest()
+    if is_duplicate_race(db, group_hash):
+        raise HTTPException(
+            status_code=400,
+            detail=f"group_uuid: {group_hash} already exists."
+        )
 
     # DB에 저장
     for race_data in races:
