@@ -21,6 +21,7 @@ def get_recent_races(db: Session = Depends(get_db)):
 
     result = []
     for race in recent_races:
+        sorted_results = sorted(race.results, key=lambda r: r.rank)
         result.append({
             "group_uuid": race.group_uuid,
             "track_name": race.track_name,
@@ -30,7 +31,7 @@ def get_recent_races(db: Session = Depends(get_db)):
                     "character_name": r.character_name,
                     "rank": r.rank,
                 }
-                for r in race.results
+                for r in sorted_results
             ]
         })
 
